@@ -6,6 +6,10 @@ import { OverviewScreen } from './screens/OverviewScreen';
 import { CampaignsScreen } from './screens/CampaignsScreen';
 import { CodesScreen } from './screens/CodesScreen';
 import { InvitationsScreen } from './screens/InvitationsScreen';
+import { ReferralsScreen } from './screens/ReferralsScreen';
+import { RewardsScreen } from './screens/RewardsScreen';
+import { WaitlistScreen } from './screens/WaitlistScreen';
+import { AntiAbuseScreen } from './screens/AntiAbuseScreen';
 import { PlaceholderScreen } from './screens/PlaceholderScreen';
 
 /**
@@ -38,6 +42,10 @@ export function App() {
         {active === 'campaigns' && <CampaignsScreen onViewCodes={viewCodesFor} />}
         {active === 'codes' && <CodesScreen key={codesCampaign ?? 'all'} initialCampaignId={codesCampaign} />}
         {active === 'invitations' && <InvitationsScreen />}
+        {active === 'referrals' && <ReferralsScreen />}
+        {active === 'rewards' && <RewardsScreen />}
+        {active === 'waitlist' && <WaitlistScreen />}
+        {active === 'abuse' && <AntiAbuseScreen />}
         {NAV.filter((n) => !n.implemented).map(
           (item) => active === item.id && <PlaceholderScreen key={item.id} item={item} />,
         )}

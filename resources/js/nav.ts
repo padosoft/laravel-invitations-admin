@@ -25,9 +25,9 @@ export const NAV: NavItem[] = [
   { id: 'campaigns', label: 'Campaigns', icon: 'campaign', implemented: true },
   { id: 'codes', label: 'Codes', icon: 'code', implemented: true },
   { id: 'invitations', label: 'Invitations', icon: 'invitation', implemented: true },
-  { id: 'referrals', label: 'Referrals', icon: 'referral', implemented: false },
-  { id: 'rewards', label: 'Rewards', icon: 'reward', implemented: false },
-  { id: 'waitlist', label: 'Waitlist', icon: 'waitlist', implemented: false },
-  { id: 'abuse', label: 'Anti-abuse', icon: 'abuse', implemented: false },
+  { id: 'referrals', label: 'Referrals', icon: 'referral', implemented: true },
+  { id: 'rewards', label: 'Rewards', icon: 'reward', implemented: true },
+  { id: 'waitlist', label: 'Waitlist', icon: 'waitlist', implemented: true },
+  { id: 'abuse', label: 'Anti-abuse', icon: 'abuse', implemented: true },
   { id: 'settings', label: 'Settings', icon: 'settings', implemented: false },
 ];
