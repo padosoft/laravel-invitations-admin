@@ -1,0 +1,71 @@
+{
+    "name": "padosoft/laravel-invitations-admin",
+    "description": "React + Tailwind admin SPA for padosoft/laravel-invitations — campaigns, codes, invitations, referrals, reward ledger, waitlist, anti-abuse review and virality analytics.",
+    "keywords": [
+        "laravel",
+        "invitations",
+        "referral",
+        "admin",
+        "spa",
+        "react",
+        "tailwind",
+        "dashboard"
+    ],
+    "homepage": "https://github.com/padosoft/laravel-invitations-admin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Padosoft",
+            "email": "support@padosoft.com",
+            "homepage": "https://www.padosoft.com"
+        }
+    ],
+    "require": {
+        "php": "^8.3",
+        "illuminate/contracts": "^12.0|^13.0",
+        "illuminate/support": "^12.0|^13.0",
+        "padosoft/laravel-invitations": "^1.0|dev-main",
+        "spatie/laravel-package-tools": "^1.92"
+    },
+    "require-dev": {
+        "larastan/larastan": "^3.0",
+        "laravel/pint": "^1.18",
+        "orchestra/testbench": "^10.0|^11.0",
+        "phpunit/phpunit": "^11.5|^12.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Padosoft\\Invitations\\Admin\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Padosoft\\Invitations\\Admin\\Tests\\": "tests/"
+        }
+    },
+    "scripts": {
+        "analyse": "vendor/bin/phpstan analyse",
+        "format": "vendor/bin/pint",
+        "test": "vendor/bin/phpunit",
+        "check": [
+            "@format",
+            "@analyse",
+            "@test"
+        ]
+    },
+    "config": {
+        "sort-packages": true,
+        "platform": {
+            "php": "8.3.0"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Padosoft\\Invitations\\Admin\\InvitationsAdminServiceProvider"
+            ]
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
