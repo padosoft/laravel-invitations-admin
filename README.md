@@ -15,7 +15,7 @@ Campaigns · invite codes · invitations (who accepted vs. who didn't) · referr
 
 </div>
 
-> ⚠️ **Active development toward `v1.0.0`.** The shipping subset (Overview, Campaigns, Codes, Invitations) is built, tested, and themeable; the remaining design-brief screens land as the core exposes their read endpoints.
+> ⚠️ **Active development toward `v1.0.0`.** Eight of the nine screens (Overview, Campaigns, Codes, Invitations, Referrals, Rewards, Waitlist, Anti-abuse) are built, tested, and themeable against the live core API; Settings lands once the core exposes its config read endpoint.
 
 ---
 
@@ -61,7 +61,7 @@ instead of cross-mounting this package — the design template that drives both 
 - 🔒 **Default-OFF, host-gated** — `INVITATIONS_ADMIN_ENABLED=false` out of the box; OFF means no routes and
   a clean 404; ON means a Blade shell behind your middleware stack.
 
-## Screens (v1.0 subset)
+## Screens
 
 | Screen | What it does |
 |---|---|
@@ -69,9 +69,13 @@ instead of cross-mounting this package — the design template that drives both 
 | **Campaigns** | Sortable table (key, name, type, status, redemptions, window) + create/edit slide-over with the full **multi-tenant GrantEditor** + inline per-field validation. |
 | **Codes** | Code table (copy, kind/state badges, uses progress, expiry) + campaign/state filters + generate drawer (with copy-all / CSV export) + destructive revoke confirm. |
 | **Invitations** | Status tabs + masked recipients + an accepted-vs-pending-vs-expired breakdown bar + a bulk send drawer. |
+| **Referrals** | Referrer → referee table + status filter (pending / qualified / rewarded / reversed) + campaign filter. |
+| **Rewards** | Reward ledger (beneficiary, party, type, amount, trigger, state) + state + party filters. |
+| **Waitlist** | Read-only queue ordered priority desc / position asc, masked emails, referral-count column + status filter. |
+| **Anti-abuse** | Signal feed (hashed subject, signal type, severity, score, action taken) + severity + action filters. |
 
-Referrals, Rewards, Waitlist, Anti-abuse, and Settings are fully specified in the design brief and render an
-informative "coming soon" placeholder until the core exposes their read endpoints.
+Settings is fully specified in the design brief and renders an informative "coming soon" placeholder until the
+core exposes its config read endpoint.
 
 ## Install
 
