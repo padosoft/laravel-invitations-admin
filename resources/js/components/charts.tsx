@@ -1,7 +1,7 @@
 // Lightweight hand-rolled SVG charts (no charting library — keeps the bundle
-// tiny and dependency-free; the design brief permits simple SVG). Every
-// reduction over a data array guards the empty case so we never emit
-// Math.max(...[]) === -Infinity into SVG coordinates (R14).
+// tiny and dependency-free; matches the Padosoft DC HUD look). Every reduction
+// over a data array guards the empty case so we never emit Math.max(...[]) ===
+// -Infinity into SVG coordinates (R14).
 
 export interface SeriesPoint {
   label: string;
@@ -10,9 +10,9 @@ export interface SeriesPoint {
 
 export function Sparkline({
   points,
-  width = 120,
-  height = 32,
-  color = 'var(--color-primary)',
+  width = 76,
+  height = 26,
+  color = 'var(--cyan-500)',
 }: {
   points: number[];
   width?: number;
@@ -34,8 +34,8 @@ export function Sparkline({
     })
     .join(' ');
   return (
-    <svg width={width} height={height} aria-hidden="true" className="overflow-visible">
-      <path d={d} fill="none" stroke={color} strokeWidth={1.6} strokeLinejoin="round" />
+    <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" style={{ overflow: 'visible' }}>
+      <path d={d} fill="none" stroke={color} strokeWidth={1.6} strokeLinejoin="round" strokeLinecap="round" />
     </svg>
   );
 }
@@ -53,8 +53,16 @@ export function TimeSeriesChart({
     return (
       <div
         data-testid={`${testId}-empty`}
-        className="flex items-center justify-center rounded-lg border border-dashed text-sm"
-        style={{ height, borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+        style={{
+          height,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          border: '1px dashed var(--line-2)',
+          borderRadius: 'var(--radius-md)',
+          fontSize: 13,
+          color: 'var(--text-low)',
+        }}
       >
         No activity in the selected range.
       </div>
@@ -65,6 +73,7 @@ export function TimeSeriesChart({
   const padding = 28;
   const max = Math.max(...series.map((s) => s.value), 1);
   const stepX = series.length > 1 ? (width - padding * 2) / (series.length - 1) : 0;
+  const gradId = `${testId}-area`;
 
   const coords = series.map((s, i) => ({
     x: padding + i * stepX,
@@ -75,26 +84,39 @@ export function TimeSeriesChart({
   const line = coords.map((c, i) => `${i === 0 ? 'M' : 'L'}${c.x.toFixed(1)},${c.y.toFixed(1)}`).join(' ');
   const area = `${line} L${coords[coords.length - 1].x.toFixed(1)},${height - padding} L${coords[0].x.toFixed(1)},${height - padding} Z`;
 
+  // Four horizontal grid lines for the HUD feel.
+  const gridYs = [0, 0.25, 0.5, 0.75, 1].map((p) => padding + p * (height - padding * 2));
+
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
       role="img"
-      aria-label="Redemptions over time"
+      aria-label="Invites and redemptions over time"
       data-testid={testId}
-      className="w-full"
-      style={{ height }}
+      preserveAspectRatio="none"
+      style={{ width: '100%', height, overflow: 'visible' }}
     >
-      <line
-        x1={padding}
-        y1={height - padding}
-        x2={width - padding}
-        y2={height - padding}
-        stroke="var(--color-border)"
+      <defs>
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor="var(--cyan-500)" stopOpacity="0.28" />
+          <stop offset="100%" stopColor="var(--cyan-500)" stopOpacity="0" />
+        </linearGradient>
+      </defs>
+      {gridYs.map((y, i) => (
+        <line key={i} x1={padding} x2={width - padding} y1={y} y2={y} stroke="var(--line-faint)" strokeWidth={1} />
+      ))}
+      <path d={area} fill={`url(#${gradId})`} />
+      <path
+        d={line}
+        fill="none"
+        stroke="var(--cyan-500)"
+        strokeWidth={2.25}
+        strokeLinejoin="round"
+        strokeLinecap="round"
+        style={{ filter: 'drop-shadow(0 0 6px var(--cyan-a40))' }}
       />
-      <path d={area} fill="var(--color-primary-soft)" opacity={0.6} />
-      <path d={line} fill="none" stroke="var(--color-primary)" strokeWidth={2} strokeLinejoin="round" />
       {coords.map((c) => (
-        <circle key={c.point.label} cx={c.x} cy={c.y} r={2.5} fill="var(--color-primary)">
+        <circle key={c.point.label} cx={c.x} cy={c.y} r={2.5} fill="var(--cyan-500)">
           <title>{`${c.point.label}: ${c.point.value}`}</title>
         </circle>
       ))}
@@ -107,13 +129,27 @@ export interface FunnelStage {
   value: number;
 }
 
+const STAGE_FILLS = [
+  'linear-gradient(90deg, var(--blue-500), var(--blue-400))',
+  'linear-gradient(90deg, var(--cyan-700), var(--cyan-500))',
+  'linear-gradient(90deg, var(--cyan-600), var(--cyan-400))',
+  'linear-gradient(90deg, #0f8f63, var(--success))',
+];
+const STAGE_DOTS = ['var(--blue-400)', 'var(--cyan-500)', 'var(--cyan-400)', 'var(--success)'];
+
 export function FunnelChart({ stages, testId }: { stages: FunnelStage[]; testId: string }) {
   if (stages.length === 0) {
     return (
       <div
         data-testid={`${testId}-empty`}
-        className="rounded-lg border border-dashed p-6 text-center text-sm"
-        style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+        style={{
+          border: '1px dashed var(--line-2)',
+          borderRadius: 'var(--radius-md)',
+          padding: 24,
+          textAlign: 'center',
+          fontSize: 13,
+          color: 'var(--text-low)',
+        }}
       >
         No funnel data yet.
       </div>
@@ -121,32 +157,45 @@ export function FunnelChart({ stages, testId }: { stages: FunnelStage[]; testId:
   }
   const top = Math.max(stages[0].value, 1);
   return (
-    <div className="flex flex-col gap-2" data-testid={testId}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }} data-testid={testId}>
       {stages.map((stage, i) => {
-        const widthPct = Math.max((stage.value / top) * 100, 2);
+        const pct = stage.value / top;
         const prev = i > 0 ? stages[i - 1].value : null;
-        const dropoff =
-          prev != null && prev > 0 ? ((prev - stage.value) / prev) * 100 : null;
+        const dropoff = prev != null && prev > 0 ? ((prev - stage.value) / prev) * 100 : null;
         return (
-          <div key={stage.label} className="flex items-center gap-3" data-testid={`${testId}-stage-${i}`}>
-            <span className="w-24 shrink-0 text-sm" style={{ color: 'var(--color-text-muted)' }}>
-              {stage.label}
-            </span>
-            <div className="relative h-9 flex-1 overflow-hidden rounded-md" style={{ backgroundColor: 'var(--color-surface-2)' }}>
+          <div key={stage.label} data-testid={`${testId}-stage-${i}`}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', marginBottom: 6 }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontSize: 13, color: 'var(--text-mid)' }}>
+                <span style={{ width: 7, height: 7, borderRadius: 2, background: STAGE_DOTS[i % STAGE_DOTS.length] }} />
+                {stage.label}
+              </span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 13, color: 'var(--text-hi)', fontWeight: 600 }}>
+                {stage.value.toLocaleString()}
+              </span>
+            </div>
+            <div style={{ height: 26, background: 'var(--bg-inset)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', position: 'relative' }}>
               <div
-                className="flex h-full items-center rounded-md px-3 text-sm font-medium text-white"
                 style={{
-                  width: `${widthPct}%`,
-                  backgroundColor: 'var(--color-primary)',
+                  width: `${Math.max(pct * 100, 4)}%`,
+                  height: '100%',
+                  background: STAGE_FILLS[i % STAGE_FILLS.length],
+                  borderRadius: 'var(--radius-sm)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  paddingRight: 8,
                   minWidth: '2.5rem',
+                  transition: 'width var(--dur-slow) var(--ease-out)',
                 }}
               >
-                {stage.value.toLocaleString()}
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-on-accent)', fontWeight: 600 }}>
+                  {(pct * 100).toFixed(0)}%
+                </span>
               </div>
             </div>
-            <span className="w-16 shrink-0 text-right text-xs" style={{ color: 'var(--color-warning)' }}>
-              {dropoff != null ? `-${dropoff.toFixed(0)}%` : ''}
-            </span>
+            <div style={{ marginTop: 4, fontFamily: 'var(--font-mono)', fontSize: 10.5, color: 'var(--text-faint)' }}>
+              {dropoff != null ? `↓ ${dropoff.toFixed(0)}% drop-off from ${stages[i - 1].label.toLowerCase()}` : 'top of funnel'}
+            </div>
           </div>
         );
       })}

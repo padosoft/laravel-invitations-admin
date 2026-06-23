@@ -7,7 +7,11 @@ import { maskEmail } from '../lib/format';
  */
 export function MaskedEmail({ email, testId }: { email: string; testId?: string }) {
   return (
-    <span data-testid={testId} title={email} className="font-mono text-sm">
+    <span
+      data-testid={testId}
+      title={email}
+      style={{ fontFamily: 'var(--font-mono)', fontSize: 12.5, color: 'var(--text-hi)' }}
+    >
       {maskEmail(email)}
     </span>
   );

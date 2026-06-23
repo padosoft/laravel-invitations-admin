@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Icon } from './Icon';
 
 /**
- * Chips input for free-form string lists (project keys, scope globs, blocklists).
- * Enter or comma commits a chip; Backspace on an empty field removes the last.
- * The text input carries a real label via aria-label passed by the caller.
+ * Chips input for free-form string lists (project keys, scope globs, blocklists)
+ * in the Padosoft DC scope-editor look. Enter or comma commits a chip;
+ * Backspace on an empty field removes the last. The text input carries a real
+ * aria-label passed by the caller.
  */
 export function ChipsInput({
   values,
@@ -37,16 +38,25 @@ export function ChipsInput({
 
   return (
     <div
-      className="flex flex-wrap items-center gap-1.5 rounded-md border px-2 py-1.5"
-      style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}
       data-testid={testId}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: 7, alignItems: 'center' }}
     >
       {values.map((v) => (
         <span
           key={v}
           data-testid={`${testId}-chip-${v}`}
-          className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs"
-          style={{ backgroundColor: 'var(--color-primary-soft)', color: 'var(--color-primary)' }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            padding: '5px 6px 5px 10px',
+            borderRadius: 'var(--radius-pill)',
+            background: 'var(--cyan-a14)',
+            border: '1px solid var(--cyan-a40)',
+            fontFamily: 'var(--font-mono)',
+            fontSize: 11.5,
+            color: 'var(--accent-ink)',
+          }}
         >
           {v}
           <button
@@ -54,9 +64,19 @@ export function ChipsInput({
             onClick={() => remove(v)}
             aria-label={`Remove ${v}`}
             data-testid={`${testId}-chip-${v}-remove`}
-            className="hover:opacity-70"
+            style={{
+              display: 'grid',
+              placeItems: 'center',
+              width: 16,
+              height: 16,
+              border: 'none',
+              background: 'var(--bg-elevated)',
+              borderRadius: 99,
+              color: 'var(--text-low)',
+              cursor: 'pointer',
+            }}
           >
-            <Icon name="close" size={12} />
+            <Icon name="x" size={12} />
           </button>
         </span>
       ))}
@@ -76,8 +96,19 @@ export function ChipsInput({
           }
         }}
         onBlur={() => draft && commit(draft)}
-        className="min-w-[8ch] flex-1 bg-transparent px-1 py-0.5 text-sm outline-none"
-        style={{ color: 'var(--color-text)' }}
+        style={{
+          flex: 1,
+          minWidth: 120,
+          height: 30,
+          padding: '0 10px',
+          background: 'var(--bg-inset)',
+          border: '1px dashed var(--line-2)',
+          borderRadius: 'var(--radius-pill)',
+          color: 'var(--text-hi)',
+          fontFamily: 'var(--font-mono)',
+          fontSize: 11.5,
+          outline: 'none',
+        }}
       />
     </div>
   );

@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Icon } from './Icon';
+import { ghostBtn } from './ds';
 
 /**
- * Copy-to-clipboard button with a transient "copied" confirmation. Icon-only,
- * so it carries an aria-label (§5). Falls back gracefully where the Clipboard
- * API is unavailable (older browsers / insecure context) — the failure is
- * surfaced via the title, never silently swallowed.
+ * Copy-to-clipboard button with a transient "copied" confirmation (Padosoft DC
+ * look). Icon-only callers still get an aria-label (§5). Falls back gracefully
+ * where the Clipboard API is unavailable — the failure is surfaced via the
+ * label/title, never silently swallowed.
  */
 export function CopyButton({
   value,
@@ -38,11 +39,12 @@ export function CopyButton({
       onClick={onCopy}
       aria-label={copied ? `${label} — copied` : label}
       title={failed ? 'Copy failed — copy manually' : label}
-      className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs transition-colors hover:opacity-80"
       style={{
-        borderColor: 'var(--color-border)',
-        color: copied ? 'var(--color-success)' : 'var(--color-text-muted)',
-        backgroundColor: 'var(--color-surface)',
+        ...ghostBtn,
+        height: 30,
+        padding: '0 10px',
+        fontSize: 12,
+        color: copied ? 'var(--success)' : 'var(--text-mid)',
       }}
     >
       <Icon name={copied ? 'check' : 'copy'} size={14} />

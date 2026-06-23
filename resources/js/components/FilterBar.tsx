@@ -1,10 +1,11 @@
 import type { InviteCampaign } from '../types';
-import { controlClass, baseControl } from './Field';
+import { Icon } from './Icon';
+import { fieldSel } from './ds';
 
 /**
- * Reusable filter bar. Campaign options are derived from the real campaigns
- * list (R18 — never a literal subset). Each control is individually optional so
- * a screen renders only the filters it needs.
+ * Reusable filter bar (Padosoft DC look). Campaign options are derived from the
+ * real campaigns list (R18 — never a literal subset). Each control is
+ * individually optional so a screen renders only the filters it needs.
  */
 export function FilterBar({
   campaigns,
@@ -22,30 +23,54 @@ export function FilterBar({
   return (
     <div
       data-testid={testId}
-      className="flex flex-wrap items-end gap-3 rounded-lg border p-3"
-      style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}
+      style={{
+        display: 'flex',
+        flexWrap: 'wrap',
+        alignItems: 'center',
+        gap: 12,
+        padding: '12px 14px',
+        background: 'var(--bg-raised)',
+        border: '1px solid var(--line-1)',
+        borderRadius: 'var(--radius-md)',
+      }}
     >
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 7,
+          fontFamily: 'var(--font-mono)',
+          fontSize: 10,
+          letterSpacing: '0.12em',
+          textTransform: 'uppercase',
+          color: 'var(--text-faint)',
+        }}
+      >
+        <Icon name="filter" size={14} /> Filters
+      </span>
       {campaigns && onCampaignChange && (
-        <div className="flex flex-col gap-1">
-          <label htmlFor={`${testId}-campaign`} className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
-            Campaign
-          </label>
-          <select
-            id={`${testId}-campaign`}
-            data-testid={`${testId}-campaign`}
-            className={controlClass('min-w-[12rem]')}
-            style={baseControl}
-            value={campaignId ?? ''}
-            onChange={(e) => onCampaignChange(e.target.value ? Number(e.target.value) : null)}
-          >
-            <option value="">All campaigns</option>
-            {campaigns.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
+        <label style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+          <span className="vh">Filter by campaign</span>
+          <span style={{ position: 'relative', display: 'inline-flex', alignItems: 'center' }}>
+            <select
+              id={`${testId}-campaign`}
+              data-testid={`${testId}-campaign`}
+              style={{ ...fieldSel, width: 'auto', minWidth: 180, height: 34 }}
+              value={campaignId ?? ''}
+              onChange={(e) => onCampaignChange(e.target.value ? Number(e.target.value) : null)}
+            >
+              <option value="">All campaigns</option>
+              {campaigns.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+            <span style={{ position: 'absolute', right: 9, pointerEvents: 'none', color: 'var(--text-low)' }}>
+              <Icon name="chevDown" size={14} />
+            </span>
+          </span>
+        </label>
       )}
       {children}
     </div>

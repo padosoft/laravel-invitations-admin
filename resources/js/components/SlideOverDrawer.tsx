@@ -1,9 +1,11 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 import { Icon } from './Icon';
+import { iconBtnSm } from './ds';
 
 /**
- * Right slide-over drawer. Esc closes; focus is trapped while open and restored
- * to the trigger on close. Backdrop click closes. role=dialog + aria-modal.
+ * Right slide-over drawer (Padosoft DC look). Esc closes; focus is trapped while
+ * open and restored to the trigger on close. Backdrop click closes.
+ * role=dialog + aria-modal.
  */
 export function SlideOverDrawer({
   open,
@@ -70,37 +72,68 @@ export function SlideOverDrawer({
   const descId = description ? `${testId}-desc` : undefined;
 
   return (
-    <div className="fixed inset-0 z-50 flex justify-end" data-testid={`${testId}-overlay`}>
+    <div style={{ position: 'fixed', inset: 0, zIndex: 1100 }} data-testid={`${testId}-overlay`}>
       <div
-        className="absolute inset-0"
-        style={{ backgroundColor: 'rgba(0,0,0,0.4)' }}
         onClick={onClose}
         aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'rgba(2,3,7,0.58)',
+          backdropFilter: 'blur(2px)',
+          WebkitBackdropFilter: 'blur(2px)',
+          animation: 'ig-fade var(--dur-base) var(--ease-out) both',
+        }}
       />
-      <div
+      <aside
         ref={panelRef}
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
         aria-describedby={descId}
         data-testid={testId}
-        className="relative flex h-full w-full max-w-xl flex-col"
         style={{
-          backgroundColor: 'var(--color-surface)',
-          boxShadow: 'var(--shadow-drawer)',
-          animation: 'ia-slide-in 0.22s ease-out',
+          position: 'absolute',
+          top: 0,
+          right: 0,
+          height: '100%',
+          width: 'min(640px, 95vw)',
+          background: 'var(--bg-surface)',
+          borderLeft: '1px solid var(--line-2)',
+          boxShadow: 'var(--shadow-xl)',
+          display: 'flex',
+          flexDirection: 'column',
+          animation: 'ig-slide var(--dur-base) var(--ease-out) both',
         }}
       >
         <header
-          className="flex items-start justify-between gap-4 border-b px-6 py-4"
-          style={{ borderColor: 'var(--color-border)' }}
+          style={{
+            flexShrink: 0,
+            display: 'flex',
+            alignItems: 'flex-start',
+            justifyContent: 'space-between',
+            gap: 16,
+            padding: '18px 20px',
+            borderBottom: '1px solid var(--line-1)',
+            background: 'var(--bg-raised)',
+          }}
         >
           <div>
-            <h2 id={titleId} className="text-lg font-semibold" style={{ color: 'var(--color-text)' }}>
+            <h2
+              id={titleId}
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontWeight: 600,
+                fontSize: 18,
+                color: 'var(--text-hi)',
+                letterSpacing: '-0.01em',
+                margin: 0,
+              }}
+            >
               {title}
             </h2>
             {description && (
-              <p id={descId} className="mt-0.5 text-sm" style={{ color: 'var(--color-text-muted)' }}>
+              <p id={descId} style={{ fontSize: 12.5, color: 'var(--text-low)', marginTop: 2, marginBottom: 0 }}>
                 {description}
               </p>
             )}
@@ -110,24 +143,31 @@ export function SlideOverDrawer({
             onClick={onClose}
             aria-label="Close"
             data-testid={`${testId}-close`}
-            className="rounded-md p-1.5 hover:opacity-70"
-            style={{ color: 'var(--color-text-muted)' }}
+            style={{ ...iconBtnSm, width: 34, height: 34 }}
           >
-            <Icon name="close" size={18} />
+            <Icon name="x" size={16} />
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto px-6 py-5">{children}</div>
+        <div style={{ flex: 1, overflowY: 'auto', padding: 20 }}>{children}</div>
 
         {footer && (
           <footer
-            className="flex items-center justify-end gap-3 border-t px-6 py-4"
-            style={{ borderColor: 'var(--color-border)' }}
+            style={{
+              flexShrink: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              gap: 10,
+              padding: '14px 20px',
+              borderTop: '1px solid var(--line-1)',
+              background: 'var(--bg-raised)',
+            }}
           >
             {footer}
           </footer>
         )}
-      </div>
+      </aside>
     </div>
   );
 }
