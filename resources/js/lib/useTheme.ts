@@ -11,7 +11,8 @@ function initialTheme(): Theme {
   } catch {
     // localStorage may be unavailable (private mode / non-DOM env) — ignore.
   }
-  return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ? 'dark' : 'light';
+  // The Padosoft DS is dark-first; default to dark unless the user prefers light.
+  return window.matchMedia?.('(prefers-color-scheme: light)')?.matches ? 'light' : 'dark';
 }
 
 /** Theme state synced to the [data-theme] attribute on <html> and localStorage. */

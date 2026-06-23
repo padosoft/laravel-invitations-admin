@@ -1,13 +1,15 @@
+import type { ReactNode } from 'react';
 import type { InviteGrant, TenantGrant, ProjectRole, Tenant } from '../types';
-import { Field, controlClass, baseControl } from './Field';
+import { Field, baseControl } from './Field';
 import { ChipsInput } from './ChipsInput';
 import { Icon } from './Icon';
+import { ghostBtn } from './ds';
 
 /**
- * Grant editor — a primary grant (applied on the redemption tenant) plus zero
- * or more additional per-tenant grants, so one code can seed access across
- * several tenants. Controlled: holds no internal state, lifts every change to
- * the parent via onChange (R29 — stateless controlled component).
+ * Grant editor (Padosoft DC look) — a primary grant (applied on the redemption
+ * tenant) plus zero or more additional per-tenant grants, so one code can seed
+ * access across several tenants. Controlled: holds no internal state, lifts
+ * every change to the parent via onChange (R29 — stateless controlled).
  *
  * `super-admin` is intentionally absent from the role options (the BE rejects
  * it; we never offer it).
@@ -27,6 +29,46 @@ function scopeToChips(scope: Record<string, unknown> | null | undefined): string
 function chipsToScope(chips: string[]): Record<string, unknown> | null {
   return chips.length ? { globs: chips } : null;
 }
+
+/** Select with the DC chevron overlay, bound to a Field-provided id. */
+function Sel({
+  id,
+  testId,
+  value,
+  onChange,
+  children,
+}: {
+  id: string;
+  testId: string;
+  value: string;
+  onChange: (v: string) => void;
+  children: ReactNode;
+}) {
+  return (
+    <span style={{ position: 'relative', display: 'block' }}>
+      <select
+        id={id}
+        data-testid={testId}
+        style={baseControl}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      >
+        {children}
+      </select>
+      <span style={{ position: 'absolute', right: 10, top: 11, pointerEvents: 'none', color: 'var(--text-low)' }}>
+        <Icon name="chevDown" size={14} />
+      </span>
+    </span>
+  );
+}
+
+const sectionLabel = {
+  fontFamily: 'var(--font-mono)',
+  fontSize: 10,
+  letterSpacing: '0.14em',
+  textTransform: 'uppercase' as const,
+  color: 'var(--accent-ink)',
+};
 
 export function GrantEditor({
   value,
@@ -65,59 +107,66 @@ export function GrantEditor({
   }
 
   return (
-    <div className="flex flex-col gap-4" data-testid="grant-editor">
+    <div data-testid="grant-editor">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 12 }}>
+        <span style={sectionLabel}>Grant editor</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10.5, color: 'var(--text-faint)' }}>
+          access seeded on redemption
+        </span>
+      </div>
+
       {/* Primary grant card */}
       <section
-        className="rounded-lg border p-4"
-        style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface-2)' }}
         data-testid="grant-editor-primary"
+        style={{
+          padding: 16,
+          background: 'var(--bg-raised)',
+          border: '1px solid var(--cyan-a24)',
+          borderRadius: 'var(--radius-md)',
+          boxShadow: 'var(--glow-inset)',
+          marginBottom: 12,
+        }}
       >
-        <h4 className="mb-3 text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
-          Primary grant
-          <span className="ml-2 font-normal" style={{ color: 'var(--color-text-muted)' }}>
-            applied on the redemption tenant
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+          <span style={{ width: 7, height: 7, borderRadius: 99, background: 'var(--cyan-500)', boxShadow: '0 0 8px var(--cyan-500)' }} />
+          <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13.5, color: 'var(--text-hi)' }}>
+            Primary grant
           </span>
-        </h4>
-        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--text-faint)', marginLeft: 'auto' }}>
+            redemption tenant
+          </span>
+        </div>
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
           <Field label="Role" name="grant-role">
             {(id) => (
-              <select
-                id={id}
-                data-testid="grant-primary-role"
-                className={controlClass()}
-                style={baseControl}
-                value={value.role ?? ''}
-                onChange={(e) => patch({ role: e.target.value || null })}
-              >
+              <Sel id={id} testId="grant-primary-role" value={value.role ?? ''} onChange={(v) => patch({ role: v || null })}>
                 <option value="">— none —</option>
                 {roleOptions.map((r) => (
                   <option key={r} value={r}>
                     {r}
                   </option>
                 ))}
-              </select>
+              </Sel>
             )}
           </Field>
           <Field label="Project role" name="grant-project-role">
             {(id) => (
-              <select
+              <Sel
                 id={id}
-                data-testid="grant-primary-project-role"
-                className={controlClass()}
-                style={baseControl}
+                testId="grant-primary-project-role"
                 value={value.project_role}
-                onChange={(e) => patch({ project_role: e.target.value as ProjectRole })}
+                onChange={(v) => patch({ project_role: v as ProjectRole })}
               >
                 {PROJECT_ROLES.map((r) => (
                   <option key={r} value={r}>
                     {r}
                   </option>
                 ))}
-              </select>
+              </Sel>
             )}
           </Field>
         </div>
-        <div className="mt-3">
+        <div style={{ marginTop: 14 }}>
           <Field label="Projects" name="grant-projects" hint="Project keys this code grants access to.">
             {() => (
               <ChipsInput
@@ -130,18 +179,18 @@ export function GrantEditor({
             )}
           </Field>
         </div>
-        <div className="mt-3">
+        <div style={{ marginTop: 14 }}>
           <Field
             label="Scope allowlist"
             name="grant-scope"
-            hint="Optional folder globs / tags restricting the grant."
+            hint="Optional folder globs / tags · Enter to add."
           >
             {() => (
               <ChipsInput
                 values={scopeToChips(value.scope_allowlist)}
                 onChange={(chips) => patch({ scope_allowlist: chipsToScope(chips) })}
                 ariaLabel="Primary grant scope allowlist"
-                placeholder="e.g. hr/policies/*"
+                placeholder="/contracts/* …"
                 testId="grant-primary-scope"
               />
             )}
@@ -150,119 +199,128 @@ export function GrantEditor({
       </section>
 
       {/* Additional tenant grants */}
-      <section className="flex flex-col gap-3">
-        <div className="flex items-center justify-between">
-          <h4 className="text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
-            Additional tenant grants
-            <span className="ml-2 font-normal" style={{ color: 'var(--color-text-muted)' }}>
-              ({tenants.length})
+      {tenants.map((tg, index) => (
+        <div
+          key={index}
+          data-testid={`grant-tenant-${index}`}
+          style={{
+            padding: 16,
+            background: 'var(--bg-raised)',
+            border: '1px solid var(--line-1)',
+            borderRadius: 'var(--radius-md)',
+            marginBottom: 12,
+          }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 14 }}>
+            <span style={{ color: 'var(--violet-400)' }}>
+              <Icon name="layers" size={16} />
             </span>
-          </h4>
-          <button
-            type="button"
-            data-testid="grant-tenant-add"
-            onClick={addTenantGrant}
-            disabled={tenantOptions.length === 0}
-            className="inline-flex items-center gap-1 rounded-md border px-2.5 py-1.5 text-xs font-medium disabled:opacity-50"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-primary)' }}
-          >
-            <Icon name="plus" size={14} />
-            Add tenant grant
-          </button>
-        </div>
-
-        {tenants.map((tg, index) => (
-          <div
-            key={index}
-            data-testid={`grant-tenant-${index}`}
-            className="rounded-lg border p-4"
-            style={{ borderColor: 'var(--color-border)', backgroundColor: 'var(--color-surface)' }}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <Field label="Tenant" name={`grant-tenant-${index}-id`}>
-                {(id) => (
-                  <select
-                    id={id}
-                    data-testid={`grant-tenant-${index}-tenant`}
-                    className={controlClass()}
-                    style={baseControl}
-                    value={tg.tenant_id}
-                    onChange={(e) => patchTenant(index, { tenant_id: e.target.value })}
-                  >
-                    {tenantOptions.map((t) => (
-                      <option key={t.id} value={t.id}>
-                        {t.name}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </Field>
-              <button
-                type="button"
-                data-testid={`grant-tenant-${index}-remove`}
-                onClick={() => removeTenant(index)}
-                aria-label={`Remove tenant grant ${index + 1}`}
-                className="mt-6 rounded-md p-1.5 hover:opacity-70"
-                style={{ color: 'var(--color-danger)' }}
-              >
-                <Icon name="trash" size={16} />
-              </button>
-            </div>
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="Role" name={`grant-tenant-${index}-role`}>
-                {(id) => (
-                  <select
-                    id={id}
-                    data-testid={`grant-tenant-${index}-role`}
-                    className={controlClass()}
-                    style={baseControl}
-                    value={tg.role ?? ''}
-                    onChange={(e) => patchTenant(index, { role: e.target.value || null })}
-                  >
-                    <option value="">— none —</option>
-                    {roleOptions.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </Field>
-              <Field label="Project role" name={`grant-tenant-${index}-project-role`}>
-                {(id) => (
-                  <select
-                    id={id}
-                    data-testid={`grant-tenant-${index}-project-role`}
-                    className={controlClass()}
-                    style={baseControl}
-                    value={tg.project_role}
-                    onChange={(e) => patchTenant(index, { project_role: e.target.value as ProjectRole })}
-                  >
-                    {PROJECT_ROLES.map((r) => (
-                      <option key={r} value={r}>
-                        {r}
-                      </option>
-                    ))}
-                  </select>
-                )}
-              </Field>
-            </div>
-            <div className="mt-3">
-              <Field label="Projects" name={`grant-tenant-${index}-projects`}>
-                {() => (
-                  <ChipsInput
-                    values={tg.projects}
-                    onChange={(projects) => patchTenant(index, { projects })}
-                    ariaLabel={`Tenant grant ${index + 1} projects`}
-                    placeholder="add project key…"
-                    testId={`grant-tenant-${index}-projects`}
-                  />
-                )}
-              </Field>
-            </div>
+            <span style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 13, color: 'var(--text-hi)' }}>
+              Extra tenant grant
+            </span>
+            <button
+              type="button"
+              data-testid={`grant-tenant-${index}-remove`}
+              onClick={() => removeTenant(index)}
+              aria-label={`Remove tenant grant ${index + 1}`}
+              style={{
+                marginLeft: 'auto',
+                width: 30,
+                height: 30,
+                display: 'inline-grid',
+                placeItems: 'center',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--line-1)',
+                background: 'var(--bg-raised)',
+                color: 'var(--danger)',
+                cursor: 'pointer',
+              }}
+            >
+              <Icon name="trash" size={14} />
+            </button>
           </div>
-        ))}
-      </section>
+          <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2">
+            <Field label="Tenant" name={`grant-tenant-${index}-id`}>
+              {(id) => (
+                <Sel
+                  id={id}
+                  testId={`grant-tenant-${index}-tenant`}
+                  value={tg.tenant_id}
+                  onChange={(v) => patchTenant(index, { tenant_id: v })}
+                >
+                  {tenantOptions.map((t) => (
+                    <option key={t.id} value={t.id}>
+                      {t.name}
+                    </option>
+                  ))}
+                </Sel>
+              )}
+            </Field>
+            <Field label="Role" name={`grant-tenant-${index}-role`}>
+              {(id) => (
+                <Sel
+                  id={id}
+                  testId={`grant-tenant-${index}-role`}
+                  value={tg.role ?? ''}
+                  onChange={(v) => patchTenant(index, { role: v || null })}
+                >
+                  <option value="">— none —</option>
+                  {roleOptions.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </Sel>
+              )}
+            </Field>
+            <Field label="Project role" name={`grant-tenant-${index}-project-role`}>
+              {(id) => (
+                <Sel
+                  id={id}
+                  testId={`grant-tenant-${index}-project-role`}
+                  value={tg.project_role}
+                  onChange={(v) => patchTenant(index, { project_role: v as ProjectRole })}
+                >
+                  {PROJECT_ROLES.map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </Sel>
+              )}
+            </Field>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <Field label="Projects" name={`grant-tenant-${index}-projects`}>
+              {() => (
+                <ChipsInput
+                  values={tg.projects}
+                  onChange={(projects) => patchTenant(index, { projects })}
+                  ariaLabel={`Tenant grant ${index + 1} projects`}
+                  placeholder="add project key…"
+                  testId={`grant-tenant-${index}-projects`}
+                />
+              )}
+            </Field>
+          </div>
+        </div>
+      ))}
+
+      <button
+        type="button"
+        data-testid="grant-tenant-add"
+        onClick={addTenantGrant}
+        disabled={tenantOptions.length === 0}
+        style={{
+          ...ghostBtn,
+          width: '100%',
+          justifyContent: 'center',
+          borderStyle: 'dashed',
+          opacity: tenantOptions.length === 0 ? 0.5 : 1,
+        }}
+      >
+        <Icon name="plus" size={14} /> Add tenant grant
+      </button>
     </div>
   );
 }
