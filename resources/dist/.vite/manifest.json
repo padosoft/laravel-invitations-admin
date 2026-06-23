@@ -1,0 +1,11 @@
+{
+  "resources/js/main.tsx": {
+    "file": "assets/main-49VtnKN1.js",
+    "name": "main",
+    "src": "resources/js/main.tsx",
+    "isEntry": true,
+    "css": [
+      "assets/main-PI-DLPoO.css"
+    ]
+  }
+}

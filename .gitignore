@@ -4,8 +4,11 @@ composer.lock
 .phpunit.result.cache
 .phpunit.cache
 /build
-/dist
+*.tsbuildinfo
 .idea
 .vscode
 .DS_Store
 Thumbs.db
+
+# The prebuilt SPA bundle under resources/dist/ IS committed on purpose so
+# consumers need no JS toolchain. Do not ignore it.
