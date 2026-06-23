@@ -87,6 +87,63 @@ export interface Tenant {
   name: string;
 }
 
+// ── New-suite read surfaces (live core endpoints, field-accurate per the core
+//    repo's InviteReadController, commit 8b6f495). Keep field names exact (R9).
+
+export type ReferralStatus = 'pending' | 'qualified' | 'rewarded' | 'reversed';
+export interface Referral {
+  id: number;
+  referrer_id: number;
+  referee_id: number;
+  code_id: number | null;
+  campaign_id: number | null;
+  status: ReferralStatus;
+  attributed_at: string | null;
+  qualified_at: string | null;
+}
+
+export type RewardState = 'pending' | 'granted' | 'reversed' | 'expired';
+export type RewardParty = 'referrer' | 'referee';
+export interface Reward {
+  id: number;
+  referral_id: number | null;
+  beneficiary_id: number;
+  party: RewardParty;
+  type: string;
+  amount: number | string;
+  unit: string | null;
+  trigger: string | null;
+  state: RewardState;
+  granted_at: string | null;
+  reversed_at: string | null;
+}
+
+export type WaitlistStatus = 'waiting' | 'invited' | 'converted' | 'removed';
+export interface WaitlistEntry {
+  id: number;
+  email: string;
+  position: number;
+  priority: number;
+  referral_count: number;
+  status: WaitlistStatus;
+  granted_code_id: number | null;
+  invited_at: string | null;
+  converted_at: string | null;
+}
+
+export type AbuseSeverity = 'warn' | 'block';
+export type AbuseAction = 'none' | 'flag' | 'throttle' | 'block';
+export interface AbuseSignal {
+  id: number;
+  subject_type: 'ip' | 'email' | 'account' | 'fingerprint' | string;
+  subject_value: string; // already hashed by the core
+  signal_type: string;
+  severity: AbuseSeverity;
+  score: number;
+  action_taken: AbuseAction;
+  created_at: string;
+}
+
 export interface ListEnvelope<T> {
   data: T[];
 }

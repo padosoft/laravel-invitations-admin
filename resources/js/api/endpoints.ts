@@ -6,6 +6,16 @@ import type {
   Invitation,
   Tenant,
   CodeState,
+  Referral,
+  ReferralStatus,
+  Reward,
+  RewardState,
+  RewardParty,
+  WaitlistEntry,
+  WaitlistStatus,
+  AbuseSignal,
+  AbuseSeverity,
+  AbuseAction,
   ListEnvelope,
   ItemEnvelope,
 } from '../types';
@@ -82,5 +92,47 @@ export async function sendInvitation(payload: {
   code_id?: number | null;
 }): Promise<Invitation> {
   const { data } = await api.post<ItemEnvelope<Invitation>>('/invitations', payload);
+  return data.data;
+}
+
+export async function listReferrals(params: {
+  campaign_id?: number | null;
+  status?: ReferralStatus | null;
+}): Promise<Referral[]> {
+  const query: Record<string, string | number> = {};
+  if (params.campaign_id != null) query.campaign_id = params.campaign_id;
+  if (params.status) query.status = params.status;
+  const { data } = await api.get<ListEnvelope<Referral>>('/referrals', { params: query });
+  return data.data;
+}
+
+export async function listRewards(params: {
+  state?: RewardState | null;
+  party?: RewardParty | null;
+}): Promise<Reward[]> {
+  const query: Record<string, string | number> = {};
+  if (params.state) query.state = params.state;
+  if (params.party) query.party = params.party;
+  const { data } = await api.get<ListEnvelope<Reward>>('/rewards', { params: query });
+  return data.data;
+}
+
+export async function listWaitlist(params: {
+  status?: WaitlistStatus | null;
+}): Promise<WaitlistEntry[]> {
+  const query: Record<string, string | number> = {};
+  if (params.status) query.status = params.status;
+  const { data } = await api.get<ListEnvelope<WaitlistEntry>>('/waitlist', { params: query });
+  return data.data;
+}
+
+export async function listAbuseSignals(params: {
+  severity?: AbuseSeverity | null;
+  action?: AbuseAction | null;
+}): Promise<AbuseSignal[]> {
+  const query: Record<string, string | number> = {};
+  if (params.severity) query.severity = params.severity;
+  if (params.action) query.action = params.action;
+  const { data } = await api.get<ListEnvelope<AbuseSignal>>('/abuse-signals', { params: query });
   return data.data;
 }
