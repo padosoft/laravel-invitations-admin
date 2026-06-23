@@ -1,12 +1,13 @@
 import { useMemo, useState } from 'react';
 import { listWaitlist } from '../api/endpoints';
 import { useAsyncData } from '../lib/useAsyncData';
-import { DataState } from '../components/DataState';
+import { DataState, EmptyState } from '../components/DataState';
 import { DataTable, TableSkeleton, type Column } from '../components/DataTable';
 import { StatBadge } from '../components/StatBadge';
 import { FilterBar } from '../components/FilterBar';
 import { MaskedEmail } from '../components/MaskedEmail';
 import { controlClass, baseControl } from '../components/Field';
+import * as ds from '../components/ds';
 import { waitlistStatusVariant } from '../components/domainBadges';
 import { formatDateTime } from '../lib/format';
 import type { WaitlistEntry, WaitlistStatus } from '../types';
@@ -77,7 +78,7 @@ export function WaitlistScreen() {
       header: 'Invited',
       sortValue: (w) => w.invited_at ?? '',
       cell: (w) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-low)' }}>
           {formatDateTime(w.invited_at)}
         </span>
       ),
@@ -85,14 +86,15 @@ export function WaitlistScreen() {
   ];
 
   return (
-    <div className="flex flex-col gap-6" data-testid="waitlist-screen">
-      <h1 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-        Waitlist
-      </h1>
+    <div className="flex flex-col gap-4" data-testid="waitlist-screen">
+      <div>
+        <h1 style={ds.h1}>Waitlist</h1>
+        <p style={ds.subtitle}>Referrals move you up the queue.</p>
+      </div>
 
       <FilterBar testId="waitlist-filter-bar">
         <div className="flex flex-col gap-1">
-          <label htmlFor="waitlist-filter-status" className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+          <label htmlFor="waitlist-filter-status" className="text-xs font-medium" style={{ color: 'var(--text-low)' }}>
             Status
           </label>
           <select
@@ -120,10 +122,10 @@ export function WaitlistScreen() {
         onRetry={waitlist.reload}
         loading={<TableSkeleton columns={6} />}
         empty={
-          <>
-            <p className="text-base font-medium">The waitlist is empty</p>
-            <p className="text-sm">Sign-ups appear here in queue order as they join.</p>
-          </>
+          <EmptyState
+            heading="The waitlist is empty"
+            body="Sign-ups appear here in queue order as they join."
+          />
         }
       >
         {waitlist.data && (

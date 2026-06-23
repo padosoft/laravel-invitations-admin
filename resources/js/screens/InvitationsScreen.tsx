@@ -3,12 +3,13 @@ import { sendInvitation } from '../api/endpoints';
 import { normalizeError } from '../api/client';
 import { useToast } from '../components/Toast';
 import { DataTable, type Column } from '../components/DataTable';
-import { DataState, type LoadState } from '../components/DataState';
+import { DataState, EmptyState, type LoadState } from '../components/DataState';
 import { StatBadge } from '../components/StatBadge';
 import { SegmentedTabs, type SegmentTab } from '../components/SegmentedTabs';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { MaskedEmail } from '../components/MaskedEmail';
+import * as ds from '../components/ds';
 import { SendInvitationDrawer } from './SendInvitationDrawer';
 import { invitationStatusVariant } from '../components/domainBadges';
 import { formatDateTime } from '../lib/format';
@@ -100,7 +101,7 @@ export function InvitationsScreen() {
       header: 'Sent at',
       sortValue: (i) => i.sent_at ?? '',
       cell: (i) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-low)' }}>
           {formatDateTime(i.sent_at)}
         </span>
       ),
@@ -109,7 +110,7 @@ export function InvitationsScreen() {
       key: 'accepted_at',
       header: 'Accepted at',
       cell: (i) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-low)' }}>
           {formatDateTime(i.accepted_at)}
         </span>
       ),
@@ -119,11 +120,12 @@ export function InvitationsScreen() {
   const tableState: LoadState = filtered.length === 0 ? 'empty' : 'ready';
 
   return (
-    <div className="flex flex-col gap-6" data-testid="invitations-screen">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-          Invitations
-        </h1>
+    <div className="flex flex-col gap-4" data-testid="invitations-screen">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 style={ds.h1}>Invitations</h1>
+          <p style={ds.subtitle}>Who accepted — and who didn't. Recipients are masked for privacy.</p>
+        </div>
         <Button onClick={() => setDrawerOpen(true)} data-testid="invitation-send">
           <Icon name="plus" size={16} /> Send invitation
         </Button>
@@ -133,23 +135,23 @@ export function InvitationsScreen() {
       {total > 0 && (
         <div
           className="flex overflow-hidden rounded-lg border text-xs font-medium text-white"
-          style={{ borderColor: 'var(--color-border)' }}
+          style={{ borderColor: 'var(--line-1)' }}
           data-testid="invitations-breakdown"
           role="img"
           aria-label={`${accepted} accepted, ${pending} pending, ${expired} expired`}
         >
           {accepted > 0 && (
-            <div className="flex items-center justify-center py-2" style={{ width: `${(accepted / total) * 100}%`, backgroundColor: 'var(--color-success)' }}>
+            <div className="flex items-center justify-center py-2" style={{ width: `${(accepted / total) * 100}%`, backgroundColor: 'var(--success)' }}>
               {accepted} accepted
             </div>
           )}
           {pending > 0 && (
-            <div className="flex items-center justify-center py-2" style={{ width: `${(pending / total) * 100}%`, backgroundColor: 'var(--color-info)' }}>
+            <div className="flex items-center justify-center py-2" style={{ width: `${(pending / total) * 100}%`, backgroundColor: 'var(--blue-400)' }}>
               {pending} pending
             </div>
           )}
           {expired > 0 && (
-            <div className="flex items-center justify-center py-2" style={{ width: `${(expired / total) * 100}%`, backgroundColor: 'var(--color-warning)' }}>
+            <div className="flex items-center justify-center py-2" style={{ width: `${(expired / total) * 100}%`, backgroundColor: 'var(--warning)' }}>
               {expired} expired
             </div>
           )}
@@ -170,16 +172,14 @@ export function InvitationsScreen() {
         error={null}
         loading={null}
         empty={
-          <>
-            <p className="text-base font-medium">No invitations to show</p>
-            <p className="text-sm">
-              Send an invitation to track its acceptance here. A persistent list endpoint is on the
-              core roadmap; this view reflects invitations sent during this session.
-            </p>
+          <EmptyState
+            heading="No invitations to show"
+            body="Send an invitation to track its acceptance here. A persistent list endpoint is on the core roadmap; this view reflects invitations sent during this session."
+          >
             <Button onClick={() => setDrawerOpen(true)} data-testid="invitations-empty-send">
               <Icon name="plus" size={16} /> Send invitation
             </Button>
-          </>
+          </EmptyState>
         }
       >
         <DataTable

@@ -3,12 +3,13 @@ import { listCampaigns, listCodes, revokeCode } from '../api/endpoints';
 import { useAsyncData } from '../lib/useAsyncData';
 import { normalizeError } from '../api/client';
 import { useToast } from '../components/Toast';
-import { DataState } from '../components/DataState';
+import { DataState, EmptyState } from '../components/DataState';
 import { DataTable, TableSkeleton, type Column } from '../components/DataTable';
 import { StatBadge } from '../components/StatBadge';
 import { FilterBar } from '../components/FilterBar';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
+import * as ds from '../components/ds';
 import { CopyButton } from '../components/CopyButton';
 import { ConfirmModal } from '../components/ConfirmModal';
 import { GenerateCodesDrawer } from './GenerateCodesDrawer';
@@ -94,8 +95,8 @@ export function CodesScreen({
             <span className="font-mono text-xs">
               {c.current_uses} / {c.max_uses}
             </span>
-            <div className="h-1 w-16 overflow-hidden rounded-full" style={{ backgroundColor: 'var(--color-surface-2)' }}>
-              <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: 'var(--color-primary)' }} />
+            <div className="h-1 w-16 overflow-hidden rounded-full" style={{ backgroundColor: 'var(--bg-inset)' }}>
+              <div className="h-full rounded-full" style={{ width: `${pct}%`, backgroundColor: 'var(--cyan-500)' }} />
             </div>
           </div>
         );
@@ -106,7 +107,7 @@ export function CodesScreen({
       header: 'Expiry',
       sortValue: (c) => c.expires_at ?? '',
       cell: (c) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-low)' }}>
           {formatDate(c.expires_at)}
         </span>
       ),
@@ -122,7 +123,7 @@ export function CodesScreen({
           disabled={c.state === 'revoked'}
           onClick={() => setRevoking(c)}
           className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:opacity-80 disabled:opacity-40"
-          style={{ borderColor: 'var(--color-border)', color: 'var(--color-danger)' }}
+          style={{ borderColor: 'var(--line-1)', color: 'var(--danger)' }}
         >
           <Icon name="trash" size={13} /> Revoke
         </button>
@@ -131,11 +132,12 @@ export function CodesScreen({
   ];
 
   return (
-    <div className="flex flex-col gap-6" data-testid="codes-screen">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-          Codes
-        </h1>
+    <div className="flex flex-col gap-4" data-testid="codes-screen">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 style={ds.h1}>Invite codes</h1>
+          <p style={ds.subtitle}>Generate, track and revoke codes — random, vanity or signed.</p>
+        </div>
         <Button onClick={() => setDrawerOpen(true)} data-testid="codes-generate">
           <Icon name="plus" size={16} /> Generate codes
         </Button>
@@ -148,7 +150,7 @@ export function CodesScreen({
         onCampaignChange={setCampaignId}
       >
         <div className="flex flex-col gap-1">
-          <label htmlFor="codes-filter-state" className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+          <label htmlFor="codes-filter-state" className="text-xs font-medium" style={{ color: 'var(--text-low)' }}>
             State
           </label>
           <select
@@ -176,13 +178,11 @@ export function CodesScreen({
         onRetry={codes.reload}
         loading={<TableSkeleton columns={6} />}
         empty={
-          <>
-            <p className="text-base font-medium">No codes match these filters</p>
-            <p className="text-sm">Generate codes or relax the filters above.</p>
+          <EmptyState heading="No codes match these filters" body="Generate codes or relax the filters above.">
             <Button onClick={() => setDrawerOpen(true)} data-testid="codes-empty-generate">
               <Icon name="plus" size={16} /> Generate codes
             </Button>
-          </>
+          </EmptyState>
         }
       >
         {codes.data && (

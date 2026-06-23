@@ -195,7 +195,7 @@ export function GenerateCodesDrawer({
       ) : (
         <div className="flex flex-col gap-4" data-testid="codes-generated-result">
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium" style={{ color: 'var(--color-text)' }}>
+            <p className="text-sm font-medium" style={{ color: 'var(--text-hi)' }}>
               {generated.length} code{generated.length === 1 ? '' : 's'} generated
             </p>
             <div className="flex gap-2">
@@ -211,11 +211,11 @@ export function GenerateCodesDrawer({
           </div>
           <ul
             className="flex flex-col divide-y rounded-md border"
-            style={{ borderColor: 'var(--color-border)' }}
+            style={{ borderColor: 'var(--line-1)' }}
             data-testid="codes-generated-list"
           >
             {generated.map((c) => (
-              <li key={c.id} className="flex items-center justify-between gap-2 px-3 py-2" style={{ borderColor: 'var(--color-border)' }}>
+              <li key={c.id} className="flex items-center justify-between gap-2 px-3 py-2" style={{ borderColor: 'var(--line-1)' }}>
                 <span className="font-mono text-sm">{c.code}</span>
                 <CopyButton value={c.code} testId={`codes-generated-${c.id}-copy`} />
               </li>

@@ -289,8 +289,8 @@ export function CampaignDrawer({
           </Field>
         </div>
 
-        <div className="mt-2 border-t pt-4" style={{ borderColor: 'var(--color-border)' }}>
-          <h3 className="mb-3 text-sm font-semibold" style={{ color: 'var(--color-text)' }}>
+        <div className="mt-2 border-t pt-4" style={{ borderColor: 'var(--line-1)' }}>
+          <h3 className="mb-3 text-sm font-semibold" style={{ color: 'var(--text-hi)' }}>
             Access grant
           </h3>
           <GrantEditor

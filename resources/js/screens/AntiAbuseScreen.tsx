@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { listAbuseSignals } from '../api/endpoints';
 import { useAsyncData } from '../lib/useAsyncData';
-import { DataState } from '../components/DataState';
+import { DataState, EmptyState } from '../components/DataState';
 import { DataTable, TableSkeleton, type Column } from '../components/DataTable';
 import { StatBadge } from '../components/StatBadge';
 import { FilterBar } from '../components/FilterBar';
 import { controlClass, baseControl } from '../components/Field';
+import * as ds from '../components/ds';
 import { abuseSeverityVariant, abuseActionVariant } from '../components/domainBadges';
 import { formatDateTime } from '../lib/format';
 import type { AbuseSignal, AbuseSeverity, AbuseAction } from '../types';
@@ -38,7 +39,7 @@ export function AntiAbuseScreen() {
       header: 'Subject',
       cell: (s) => (
         <span className="flex flex-col">
-          <span className="text-xs uppercase" style={{ color: 'var(--color-text-muted)' }}>
+          <span className="text-xs uppercase" style={{ color: 'var(--text-low)' }}>
             {s.subject_type}
           </span>
           <span className="font-mono text-xs" title={`hashed ${s.subject_type}`}>
@@ -85,7 +86,7 @@ export function AntiAbuseScreen() {
       header: 'When',
       sortValue: (s) => s.created_at,
       cell: (s) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span className="text-xs" style={{ color: 'var(--text-low)' }}>
           {formatDateTime(s.created_at)}
         </span>
       ),
@@ -93,14 +94,15 @@ export function AntiAbuseScreen() {
   ];
 
   return (
-    <div className="flex flex-col gap-6" data-testid="abuse-screen">
-      <h1 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-        Anti-abuse
-      </h1>
+    <div className="flex flex-col gap-4" data-testid="abuse-screen">
+      <div>
+        <h1 style={ds.h1}>Anti-abuse review</h1>
+        <p style={ds.subtitle}>Signals, scores and actions. Calm by design — danger is reserved for real blocks.</p>
+      </div>
 
       <FilterBar testId="abuse-filter-bar">
         <div className="flex flex-col gap-1">
-          <label htmlFor="abuse-filter-severity" className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+          <label htmlFor="abuse-filter-severity" className="text-xs font-medium" style={{ color: 'var(--text-low)' }}>
             Severity
           </label>
           <select
@@ -120,7 +122,7 @@ export function AntiAbuseScreen() {
           </select>
         </div>
         <div className="flex flex-col gap-1">
-          <label htmlFor="abuse-filter-action" className="text-xs font-medium" style={{ color: 'var(--color-text-muted)' }}>
+          <label htmlFor="abuse-filter-action" className="text-xs font-medium" style={{ color: 'var(--text-low)' }}>
             Action
           </label>
           <select
@@ -148,10 +150,10 @@ export function AntiAbuseScreen() {
         onRetry={signals.reload}
         loading={<TableSkeleton columns={6} />}
         empty={
-          <>
-            <p className="text-base font-medium">No signals match these filters</p>
-            <p className="text-sm">Anti-abuse signals appear here as the fraud detectors score activity.</p>
-          </>
+          <EmptyState
+            heading="No signals match these filters"
+            body="Anti-abuse signals appear here as the fraud detectors score activity."
+          />
         }
       >
         {signals.data && (

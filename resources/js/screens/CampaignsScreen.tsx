@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { listCampaigns, listTenants } from '../api/endpoints';
 import { useAsyncData } from '../lib/useAsyncData';
-import { DataState } from '../components/DataState';
+import { DataState, EmptyState } from '../components/DataState';
 import { DataTable, TableSkeleton, type Column } from '../components/DataTable';
 import { StatBadge } from '../components/StatBadge';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
+import * as ds from '../components/ds';
 import { CampaignDrawer } from './CampaignDrawer';
 import { campaignTypeVariant, campaignStatusVariant, humanLabel } from '../components/domainBadges';
 import { formatDate } from '../lib/format';
@@ -13,7 +14,7 @@ import type { InviteCampaign } from '../types';
 
 // Roles offered in the grant editor. super-admin is intentionally excluded
 // (the BE rejects it). A host with Spatie roles can widen this later.
-const ROLE_OPTIONS = ['admin', 'editor', 'viewer', 'dpo'];
+const ROLE_OPTIONS = ['member', 'editor', 'manager', 'admin', 'billing-admin'];
 
 export function CampaignsScreen({ onViewCodes }: { onViewCodes: (campaignId: number) => void }) {
   const campaigns = useAsyncData(() => listCampaigns(), [], (d) => d.length === 0);
@@ -73,7 +74,7 @@ export function CampaignsScreen({ onViewCodes }: { onViewCodes: (campaignId: num
       key: 'window',
       header: 'Window',
       cell: (c) => (
-        <span className="text-xs" style={{ color: 'var(--color-text-muted)' }}>
+        <span style={{ fontFamily: 'var(--font-mono)', fontSize: 12, color: 'var(--text-low)', whiteSpace: 'nowrap' }}>
           {formatDate(c.starts_at)} → {formatDate(c.ends_at)}
         </span>
       ),
@@ -88,19 +89,21 @@ export function CampaignsScreen({ onViewCodes }: { onViewCodes: (campaignId: num
             type="button"
             data-testid={`campaign-row-${c.id}-edit`}
             onClick={() => openEdit(c)}
-            className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:opacity-80"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+            aria-label={`Edit ${c.name}`}
+            title="Edit campaign"
+            style={ds.iconBtnSm}
           >
-            <Icon name="edit" size={13} /> Edit
+            <Icon name="rotate" size={14} />
           </button>
           <button
             type="button"
             data-testid={`campaign-row-${c.id}-codes`}
             onClick={() => onViewCodes(c.id)}
-            className="inline-flex items-center gap-1 rounded-md border px-2 py-1 text-xs hover:opacity-80"
-            style={{ borderColor: 'var(--color-border)', color: 'var(--color-text)' }}
+            aria-label={`View codes for ${c.name}`}
+            title="View codes"
+            style={ds.iconBtnSm}
           >
-            <Icon name="code" size={13} /> Codes
+            <Icon name="external" size={14} />
           </button>
         </div>
       ),
@@ -108,13 +111,14 @@ export function CampaignsScreen({ onViewCodes }: { onViewCodes: (campaignId: num
   ];
 
   return (
-    <div className="flex flex-col gap-6" data-testid="campaigns-screen">
-      <div className="flex items-center justify-between gap-4">
-        <h1 className="text-xl font-semibold" style={{ color: 'var(--color-text)' }}>
-          Campaigns
-        </h1>
+    <div className="flex flex-col gap-4" data-testid="campaigns-screen">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <h1 style={ds.h1}>Campaigns</h1>
+          <p style={ds.subtitle}>Invite programs · key, type, status &amp; redemption window.</p>
+        </div>
         <Button onClick={openCreate} data-testid="campaign-create">
-          <Icon name="plus" size={16} /> New campaign
+          <Icon name="plus" size={16} /> Create campaign
         </Button>
       </div>
 
@@ -125,13 +129,14 @@ export function CampaignsScreen({ onViewCodes }: { onViewCodes: (campaignId: num
         onRetry={campaigns.reload}
         loading={<TableSkeleton columns={7} />}
         empty={
-          <>
-            <p className="text-base font-medium">No campaigns yet</p>
-            <p className="text-sm">Create your first campaign to start issuing invite codes.</p>
+          <EmptyState
+            heading="No campaigns yet"
+            body="Create your first campaign to start issuing invite codes and tracking redemptions."
+          >
             <Button onClick={openCreate} data-testid="campaigns-empty-create">
-              <Icon name="plus" size={16} /> Create your first
+              <Icon name="plus" size={16} /> Create campaign
             </Button>
-          </>
+          </EmptyState>
         }
       >
         {campaigns.data && (
