@@ -97,7 +97,9 @@ export function ReferralsScreen() {
       cell: (r) => (
         <span className="flex items-center gap-2 font-mono text-xs">
           <span title="Referrer user id">#{r.referrer_id}</span>
-          <Icon name="chevron" size={12} />
+          <span style={{ color: 'var(--text-faint)' }}>
+            <Icon name="arrowRight" size={12} />
+          </span>
           <span title="Referee user id">#{r.referee_id}</span>
         </span>
       ),
