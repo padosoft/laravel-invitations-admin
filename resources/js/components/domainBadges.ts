@@ -12,13 +12,13 @@ import type {
   AbuseAction,
 } from '../types';
 
-// Single source of truth for state → badge-variant mapping, so every screen
-// renders the same color for the same state.
+// Single source of truth for state → badge-tone mapping (matches the Padosoft
+// DC tone map), so every screen renders the same color for the same state.
 
 export const campaignTypeVariant: Record<CampaignType, BadgeVariant> = {
-  single_use: 'neutral',
-  multi_use: 'info',
-  capacity: 'primary',
+  single_use: 'info',
+  multi_use: 'cyan',
+  capacity: 'violet',
   referral: 'success',
   waitlist_skip: 'warning',
 };
@@ -27,7 +27,7 @@ export const campaignStatusVariant: Record<CampaignStatus, BadgeVariant> = {
   draft: 'neutral',
   active: 'success',
   paused: 'warning',
-  ended: 'danger',
+  ended: 'neutral',
 };
 
 export const codeStateVariant: Record<CodeState, BadgeVariant> = {
@@ -40,25 +40,27 @@ export const codeStateVariant: Record<CodeState, BadgeVariant> = {
 
 export const codeKindVariant: Record<CodeKind, BadgeVariant> = {
   random: 'neutral',
-  vanity: 'info',
-  signed: 'primary',
+  vanity: 'cyan',
+  signed: 'violet',
 };
 
 export const invitationStatusVariant: Record<Invitation['status'], BadgeVariant> = {
-  pending: 'neutral',
+  pending: 'warning',
   sent: 'info',
   accepted: 'success',
-  expired: 'warning',
+  expired: 'neutral',
   revoked: 'danger',
 };
 
 export const referralStatusVariant: Record<ReferralStatus, BadgeVariant> = {
-  pending: 'neutral',
+  pending: 'warning',
   qualified: 'info',
   rewarded: 'success',
   reversed: 'danger',
 };
 
+// Live core reward states (pending/granted/reversed/expired) — mapped to the
+// nearest DC tones.
 export const rewardStateVariant: Record<RewardState, BadgeVariant> = {
   pending: 'neutral',
   granted: 'success',
@@ -81,8 +83,8 @@ export const abuseSeverityVariant: Record<AbuseSeverity, BadgeVariant> = {
 // Action-taken stays calm — danger reserved for an actual block (brief §6.8).
 export const abuseActionVariant: Record<AbuseAction, BadgeVariant> = {
   none: 'neutral',
-  flag: 'info',
-  throttle: 'warning',
+  flag: 'warning',
+  throttle: 'info',
   block: 'danger',
 };
 

@@ -1,0 +1,63 @@
+/* ============================================================
+   PADOSOFT — BASE: resets + a few HUD utility classes.
+   Kept minimal; components carry their own styling.
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font: var(--text-body-font);
+  color: var(--text-body);
+  background: var(--surface-app);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection { background: var(--cyan-a24); color: var(--text-hi); }
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { color: var(--accent-strong); }
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: var(--radius-pill);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--line-strong); }
+
+/* ---- HUD utilities ---- */
+.pds-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--text-low);
+}
+.pds-mono { font-family: var(--font-mono); letter-spacing: var(--track-mono); }
+
+.pds-grid-bg {
+  background-image: var(--grid-line-bg);
+  background-size: var(--grid-size) var(--grid-size);
+}
+.pds-aurora { background-image: var(--grad-aurora); }
+
+.pds-gradient-text {
+  background: var(--grad-signal);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Thin animated top-edge highlight used on panels */
+.pds-edge-lit { position: relative; }
+.pds-edge-lit::before {
+  content: "";
+  position: absolute; inset: 0 0 auto 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--line-strong), transparent);
+  opacity: 0.7;
+}

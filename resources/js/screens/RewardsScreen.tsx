@@ -48,7 +48,7 @@ export function RewardsScreen() {
       header: 'Party',
       sortValue: (r) => r.party,
       cell: (r) => (
-        <StatBadge variant={r.party === 'referrer' ? 'info' : 'primary'} testId={`reward-row-${r.id}-party`}>
+        <StatBadge variant={r.party === 'referrer' ? 'cyan' : 'violet'} testId={`reward-row-${r.id}-party`}>
           {r.party}
         </StatBadge>
       ),

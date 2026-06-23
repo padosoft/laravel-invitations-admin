@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import { Icon } from './Icon';
+import { iconChip } from './ds';
 
 export type LoadState = 'idle' | 'loading' | 'ready' | 'error' | 'empty';
 
@@ -33,28 +34,58 @@ export function DataState({
         <div
           role="alert"
           data-testid={`${testId}-error`}
-          className="flex flex-col items-start gap-3 rounded-lg border p-6"
+          className="flex flex-col items-center gap-3.5 text-center"
           style={{
-            borderColor: 'var(--color-danger)',
-            backgroundColor: 'var(--color-danger-soft)',
+            background: 'var(--bg-raised)',
+            border: '1px solid rgba(255,92,122,0.28)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-card)',
+            padding: '40px 24px',
           }}
         >
-          <div className="flex items-center gap-2 font-medium" style={{ color: 'var(--color-danger)' }}>
-            <Icon name="warning" size={18} />
-            <span>Something went wrong</span>
+          <span
+            style={{
+              ...iconChip,
+              width: 56,
+              height: 56,
+              borderRadius: 16,
+              color: 'var(--danger)',
+              background: 'var(--danger-dim)',
+              border: '1px solid rgba(255,92,122,0.3)',
+            }}
+          >
+            <Icon name="alert" size={24} />
+          </span>
+          <div>
+            <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17, color: 'var(--text-hi)' }}>
+              Couldn&rsquo;t load this data
+            </div>
+            <div style={{ fontSize: 13, color: 'var(--text-low)', marginTop: 4, maxWidth: 340 }}>
+              {error ?? 'The request failed. The error is shown here, never swallowed.'}
+            </div>
           </div>
-          <p className="text-sm" style={{ color: 'var(--color-text)' }}>
-            {error ?? 'Unable to load this data.'}
-          </p>
           {onRetry && (
             <button
               type="button"
               data-testid={`${testId}-retry`}
               onClick={onRetry}
-              className="rounded-md px-3 py-1.5 text-sm font-medium"
-              style={{ backgroundColor: 'var(--color-danger)', color: '#fff' }}
+              style={{
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 7,
+                height: 36,
+                padding: '0 13px',
+                borderRadius: 'var(--radius-md)',
+                border: '1px solid var(--line-2)',
+                cursor: 'pointer',
+                background: 'var(--bg-raised)',
+                color: 'var(--text-mid)',
+                fontFamily: 'var(--font-sans)',
+                fontSize: 13,
+                fontWeight: 500,
+              }}
             >
-              Retry
+              <Icon name="rotate" size={14} /> Retry
             </button>
           )}
         </div>
@@ -62,13 +93,46 @@ export function DataState({
       {state === 'empty' && (
         <div
           data-testid={`${testId}-empty`}
-          className="flex flex-col items-center gap-3 rounded-lg border border-dashed p-12 text-center"
-          style={{ borderColor: 'var(--color-border)', color: 'var(--color-text-muted)' }}
+          className="flex flex-col items-center gap-3.5 text-center"
+          style={{
+            background: 'var(--bg-raised)',
+            border: '1px solid var(--line-1)',
+            borderRadius: 'var(--radius-lg)',
+            boxShadow: 'var(--shadow-card)',
+            padding: '40px 24px',
+            color: 'var(--text-low)',
+          }}
         >
           {empty}
         </div>
       )}
       {state === 'ready' && children}
     </div>
+  );
+}
+
+/** A cyan icon chip + display heading + body, for the empty-state slot. */
+export function EmptyState({
+  heading,
+  body,
+  children,
+}: {
+  heading: string;
+  body: string;
+  children?: ReactNode;
+}) {
+  return (
+    <>
+      <span style={{ ...iconChip, width: 56, height: 56, borderRadius: 16 }}>
+        <Icon name="megaphone" size={24} />
+      </span>
+      <div>
+        <div style={{ fontFamily: 'var(--font-display)', fontWeight: 600, fontSize: 17, color: 'var(--text-hi)' }}>
+          {heading}
+        </div>
+        <div style={{ fontSize: 13, color: 'var(--text-low)', marginTop: 4, maxWidth: 320 }}>{body}</div>
+      </div>
+      {children}
+    </>
   );
 }

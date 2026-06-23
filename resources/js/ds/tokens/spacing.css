@@ -1,0 +1,49 @@
+/* ============================================================
+   PADOSOFT — SPACING & LAYOUT
+   4px base grid. Tight, instrument-panel rhythm.
+   ============================================================ */
+:root {
+  --space-0:   0;
+  --space-1:   4px;
+  --space-2:   8px;
+  --space-3:   12px;
+  --space-4:   16px;
+  --space-5:   20px;
+  --space-6:   24px;
+  --space-7:   32px;
+  --space-8:   40px;
+  --space-9:   48px;
+  --space-10:  64px;
+  --space-11:  80px;
+  --space-12:  96px;
+  --space-13:  128px;
+  --space-14:  160px;
+
+  /* ---- Radii (HUD: small, crisp; pill for chips/tracks) ---- */
+  --radius-xs:   3px;
+  --radius-sm:   6px;
+  --radius-md:   10px;
+  --radius-lg:   14px;
+  --radius-xl:   20px;
+  --radius-2xl:  28px;
+  --radius-pill: 999px;
+
+  /* ---- Borders ---- */
+  --border-w:        1px;
+  --border-w-thick:  1.5px;
+
+  /* ---- Layout ---- */
+  --container:       1200px; /* @kind other */
+  --container-wide:  1440px; /* @kind other */
+  --sidebar-w:       248px;  /* @kind other */
+  --topbar-h:        56px;   /* @kind other */
+  --gutter:          24px;   /* @kind spacing */
+
+  /* ---- Z-index ---- */
+  --z-base:     0;    /* @kind other */
+  --z-raised:   10;   /* @kind other */
+  --z-sticky:   100;  /* @kind other */
+  --z-overlay:  1000; /* @kind other */
+  --z-modal:    1100; /* @kind other */
+  --z-toast:    1200; /* @kind other */
+}

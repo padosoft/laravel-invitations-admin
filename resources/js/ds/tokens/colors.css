@@ -1,0 +1,87 @@
+/* ============================================================
+   PADOSOFT — COLOR SYSTEM
+   Dark, agentic HUD. Deep near-black surfaces, neon-cyan signal,
+   electric-blue depth, restrained violet. Lines and nodes.
+   ============================================================ */
+:root {
+  /* ---- Base surfaces (deep → raised) ---- */
+  --void:           #04050a;   /* page void, behind everything */
+  --bg-base:        #07090f;   /* default app background */
+  --bg-surface:     #0b0e16;   /* panels, sidebars */
+  --bg-raised:      #11151f;   /* cards, popovers */
+  --bg-elevated:    #161b27;   /* hover/raised cards, inputs */
+  --bg-inset:       #05070c;   /* wells, code blocks, track grooves */
+
+  /* ---- Hairlines & strokes (cyan-tinted) ---- */
+  --line-faint:     rgba(120, 200, 220, 0.07);
+  --line-1:         rgba(120, 200, 220, 0.12);
+  --line-2:         rgba(120, 200, 220, 0.20);
+  --line-strong:    rgba(74, 242, 201, 0.38);
+  --grid-line:      rgba(120, 200, 220, 0.05);
+
+  /* ---- Text ---- */
+  --text-hi:        #eaf6f4;   /* headings, primary */
+  --text-mid:       #a3b4bb;   /* body */
+  --text-low:       #65787f;   /* secondary, captions */
+  --text-faint:     #3c4a50;   /* disabled, ghosts */
+  --text-on-accent: #04130f;   /* text on cyan fills */
+
+  /* ---- Primary signal: neon cyan ---- */
+  --cyan-300:       #8efbe8;
+  --cyan-400:       #5cf7e0;
+  --cyan-500:       #2ff5d6;   /* PRIMARY accent */
+  --cyan-600:       #12d9bb;
+  --cyan-700:       #0bab95;
+  --cyan-900:       #06463d;
+
+  /* ---- Depth accent: electric blue ---- */
+  --blue-300:       #8fc6ff;
+  --blue-400:       #5aabff;
+  --blue-500:       #2e9bff;
+  --blue-600:       #1a72d6;
+
+  /* ---- Rare accent: agent violet ---- */
+  --violet-400:     #a394ff;
+  --violet-500:     #7b6cff;
+  --violet-600:     #5a48e0;
+
+  /* ---- Semantic ---- */
+  --success:        #2ff5a8;
+  --success-dim:    #103a2c;
+  --warning:        #ffcf5c;
+  --warning-dim:    #3a2f10;
+  --danger:         #ff5c7a;
+  --danger-dim:     #3a1018;
+  --info:           #2e9bff;
+  --info-dim:       #0e2238;
+
+  /* ---- Accent translucency (for fills, glows, halos) ---- */
+  --cyan-a08:       rgba(47, 245, 214, 0.08);
+  --cyan-a14:       rgba(47, 245, 214, 0.14);
+  --cyan-a24:       rgba(47, 245, 214, 0.24);
+  --cyan-a40:       rgba(47, 245, 214, 0.40);
+  --blue-a14:       rgba(46, 155, 255, 0.14);
+  --violet-a14:     rgba(123, 108, 255, 0.14);
+
+  /* ---- Signature gradients ---- */
+  --grad-signal:    linear-gradient(135deg, #2ff5d6 0%, #2e9bff 100%); /* @kind color */
+  --grad-agent:     linear-gradient(135deg, #5cf7e0 0%, #7b6cff 120%); /* @kind color */
+  --grad-aurora:    radial-gradient(120% 120% at 0% 0%, rgba(47,245,214,0.18), transparent 55%),
+                    radial-gradient(120% 120% at 100% 0%, rgba(46,155,255,0.16), transparent 55%); /* @kind color */
+  --grad-panel:     linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.00) 40%); /* @kind color */
+  --grad-edge:      linear-gradient(180deg, var(--line-2), transparent); /* @kind color */
+
+  /* ---- Semantic aliases (use these in components) ---- */
+  --surface-app:    var(--bg-base);
+  --surface-panel:  var(--bg-surface);
+  --surface-card:   var(--bg-raised);
+  --surface-input:  var(--bg-elevated);
+  --border-card:    var(--line-1);
+  --border-input:   var(--line-2);
+  --accent:         var(--cyan-500);
+  --accent-strong:  var(--cyan-400);
+  --accent-deep:    var(--cyan-700);
+  --focus-ring:     var(--cyan-a40);
+  --text-body:      var(--text-mid);
+  --text-heading:   var(--text-hi);
+}

@@ -1,0 +1,45 @@
+/* ============================================================
+   PADOSOFT — EFFECTS: shadows, glows, blur, grids
+   The HUD signature lives here — neon halos and crisp hairlines.
+   ============================================================ */
+:root {
+  /* ---- Drop shadows (ambient depth on near-black) ---- */
+  --shadow-xs:   0 1px 2px rgba(0,0,0,0.5);
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.45);
+  --shadow-md:   0 8px 24px -6px rgba(0,0,0,0.6);
+  --shadow-lg:   0 24px 60px -20px rgba(0,0,0,0.78);
+  --shadow-xl:   0 40px 100px -30px rgba(0,0,0,0.85);
+
+  /* ---- Card framing (hairline + lift), the default look ---- */
+  --ring-1:      inset 0 0 0 1px var(--line-1);
+  --ring-2:      inset 0 0 0 1px var(--line-2);
+  --shadow-card: inset 0 0 0 1px var(--line-1), 0 18px 44px -24px rgba(0,0,0,0.8);
+  --shadow-pop:  inset 0 0 0 1px var(--line-2), 0 24px 60px -16px rgba(0,0,0,0.85);
+
+  /* ---- Neon glows (signal) ---- */
+  --glow-xs:     0 0 8px rgba(47,245,214,0.30);
+  --glow-sm:     0 0 14px rgba(47,245,214,0.38);
+  --glow-md:     0 0 26px rgba(47,245,214,0.45);
+  --glow-lg:     0 0 48px rgba(47,245,214,0.40);
+  --glow-blue:   0 0 26px rgba(46,155,255,0.40);
+  --glow-violet: 0 0 26px rgba(123,108,255,0.40);
+  --glow-inset:  inset 0 0 18px rgba(47,245,214,0.10);
+
+  /* ---- Composite: accent button / focused control ---- */
+  --shadow-accent: 0 0 0 1px var(--cyan-a40), 0 8px 30px -8px rgba(47,245,214,0.45);
+  --focus-shadow:  0 0 0 3px var(--cyan-a40);
+
+  /* ---- Blur (glass overlays) ---- */
+  --blur-sm:  blur(6px);  /* @kind other */
+  --blur-md:  blur(14px); /* @kind other */
+  --blur-lg:  blur(28px); /* @kind other */
+
+  /* ---- Repeating HUD grid (use as background-image) ---- */
+  --grid-dot:  radial-gradient(var(--grid-line) 1px, transparent 1px); /* @kind other */
+  --grid-line-bg:
+     linear-gradient(var(--grid-line) 1px, transparent 1px),
+     linear-gradient(90deg, var(--grid-line) 1px, transparent 1px); /* @kind other */
+  --grid-size: 32px; /* @kind spacing */
+  --scanline:  repeating-linear-gradient(
+     0deg, transparent 0 2px, rgba(120,200,220,0.025) 2px 3px); /* @kind other */
+}
