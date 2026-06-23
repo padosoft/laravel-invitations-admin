@@ -63,19 +63,68 @@ instead of cross-mounting this package — the design template that drives both 
 
 ## Screens
 
-| Screen | What it does |
-|---|---|
-| **Overview** | KPI cards (K-factor, acceptance/conversion rate, codes, redemptions, distinct referrers, time-to-redeem p50/p90) + acquisition funnel, filtered by campaign + date range. |
-| **Campaigns** | Sortable table (key, name, type, status, redemptions, window) + create/edit slide-over with the full **multi-tenant GrantEditor** + inline per-field validation. |
-| **Codes** | Code table (copy, kind/state badges, uses progress, expiry) + campaign/state filters + generate drawer (with copy-all / CSV export) + destructive revoke confirm. |
-| **Invitations** | Status tabs + masked recipients + an accepted-vs-pending-vs-expired breakdown bar + a bulk send drawer. |
-| **Referrals** | Referrer → referee table + status filter (pending / qualified / rewarded / reversed) + campaign filter. |
-| **Rewards** | Reward ledger (beneficiary, party, type, amount, trigger, state) + state + party filters. |
-| **Waitlist** | Read-only queue ordered priority desc / position asc, masked emails, referral-count column + status filter. |
-| **Anti-abuse** | Signal feed (hashed subject, signal type, severity, score, action taken) + severity + action filters. |
+A dark-first HUD console (Padosoft Design System — neon-cyan signal, Space Grotesk / Inter / JetBrains Mono),
+with a derived light theme one click away. All nine screens are live and wired to the core API.
 
-Settings is fully specified in the design brief and renders an informative "coming soon" placeholder until the
-core exposes its config read endpoint.
+### Overview — virality dashboard
+
+KPI cards (K-factor, acceptance/conversion rate, codes issued, redemptions, distinct referrers, time-to-redeem
+p50/p90) + acquisition funnel + redemptions time-series, filtered by campaign + date range.
+
+![Overview (dark)](resources/screenshots/laravel-invitations-admin-dashboard-dark.png)
+![Overview (light)](resources/screenshots/laravel-invitations-admin-dashboard.png)
+
+### Campaigns
+
+Sortable table (key, name, type, status, redemptions, window) + a create/edit slide-over with the full
+**multi-tenant GrantEditor** (primary grant + repeatable per-tenant grants) and inline per-field validation.
+
+![Campaigns](resources/screenshots/laravel-invitations-admin-campaigns.png)
+
+### Codes
+
+Code table (copy, kind/state badges, uses progress, expiry) + campaign/state filters + a generate drawer with
+copy-all / CSV export, and a destructive revoke confirm modal.
+
+![Codes](resources/screenshots/laravel-invitations-admin-invite-codes.png)
+
+### Invitations
+
+Status tabs + masked recipients + an accepted-vs-pending-vs-expired breakdown bar + a bulk send drawer.
+
+![Invitations](resources/screenshots/laravel-invitations-admin-invitations.png)
+
+### Referrals
+
+A legible referrer → referee attribution graph beside a status-filtered table.
+
+![Referrals](resources/screenshots/laravel-invitations-admin-referral-graph.png)
+
+### Rewards
+
+Double-sided reward ledger (beneficiary, party, type, amount, trigger, state) with state + party filters.
+
+![Rewards](resources/screenshots/laravel-invitations-admin-reward-ledger.png)
+
+### Waitlist
+
+Read-only queue ordered priority desc / position asc, masked emails, referral-count column + status filter.
+
+![Waitlist](resources/screenshots/laravel-invitations-admin-waitlist.png)
+
+### Anti-abuse
+
+A calm signal feed (hashed subject, signal type, severity, score, action taken) with severity + action filters —
+danger color reserved for real blocks.
+
+![Anti-abuse](resources/screenshots/laravel-invitations-admin-anti-abuse-review.png)
+
+### Settings
+
+Read-only view of the tenant's invite configuration (anti-abuse thresholds, velocity windows, PII retention,
+defaults).
+
+![Settings](resources/screenshots/laravel-invitations-admin-settings.png)
 
 ## Install
 
@@ -114,6 +163,33 @@ return [
 
 Visit `/admin/invitations` — the SPA boots and talks to the core API at `api_base` using the session cookie.
 With `enabled=false` the route is absent and returns a clean 404.
+
+### Cross-mounting into a host app (e.g. AskMyDocs)
+
+This package is built to **cross-mount** into a host application exactly like the other `padosoft/*-admin`
+sister packages — `composer require`, flip `INVITATIONS_ADMIN_ENABLED=true`, and gate the route group with the
+host's admin auth + RBAC via `invitations-admin.middleware`:
+
+```php
+// config/invitations-admin.php (in the host)
+'middleware' => ['web', 'auth', 'tenant.authorize', 'can:manage-invitations'],
+```
+
+What makes the cross-mount clean:
+
+- **Self-contained bundle.** The prebuilt SPA (JS + CSS, fonts inlined via the DS `@import`) ships in
+  `resources/dist/` and is served by the package's own asset route — the host needs **no** JS toolchain,
+  no `npm`, no Vite config.
+- **No same-origin assumptions beyond `api_base`.** The SPA's only backend dependency is the core API base
+  URL (default `/api/admin/invitations`), injected into `window.InvitationsAdmin` by the Blade shell. Point
+  `api_base` wherever the host mounts the core package's admin routes. All in-app navigation is client-side
+  (no server routes per screen), so the single gated `GET {route_prefix}` serves every screen.
+- **Session-cookie auth + CSRF.** The shell injects the CSRF token; the axios client sends it with
+  `withCredentials`, so the host's existing session guard protects every API call.
+- **Default-OFF is a clean 404.** With the flag off no routes are registered (verified in both states by the
+  package's `MountTest`), so a fresh install of the host adds nothing until an operator opts in.
+
+The host keeps full control of the auth boundary; this package only renders the console.
 
 ## Theming
 
